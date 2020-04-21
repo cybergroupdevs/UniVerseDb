@@ -40,6 +40,7 @@ export class VendorSignUpComponent implements OnInit {
   toggle: boolean = false;
   editVendor: boolean;
   vendorId:number;
+  itemEnable: boolean = true;
   heading:string='Register Vendor';
   vendorDetailForm = new FormGroup({
     VendorNo: new FormControl(),
@@ -89,6 +90,10 @@ export class VendorSignUpComponent implements OnInit {
     }
     else{
       this.vendorDetailForm.controls['VendorNo'].disable()
+    }
+    if(this.router.url.endsWith('/vendor/edit')){
+      this.itemEnable = false;
+      this.vendorDetailForm.controls['State'].disable()
     }
   }
   initiateForm(description, id): FormGroup {

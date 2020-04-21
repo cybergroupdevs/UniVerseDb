@@ -18,6 +18,7 @@ import { async } from '@angular/core/testing';
   styleUrls: ['./invoice-detail.component.css']
 })
 export class InvoiceDetailComponent implements OnInit {
+  quantityReceivedGreater: boolean = false;
   invoiceForm: FormGroup;
   editInvoice: boolean;
   heading: string;
@@ -75,7 +76,7 @@ export class InvoiceDetailComponent implements OnInit {
       description: new FormControl(),
       quantityOrdered: new FormControl(quantity),
       quantityPending: new FormControl(quantityPending),
-      quantityReceived: new FormControl(quantityReceived)
+      quantityReceived: new FormControl('0')
     })
   }
 
@@ -85,6 +86,11 @@ export class InvoiceDetailComponent implements OnInit {
   }
 
   submitInvoice(submitStatus) {
+    if(this.quantityReceivedGreater == true){
+      this.openSnackBar('Quantity Received is greater than Quantity Pending!','Dismiss')
+      return
+    }
+    else{
     if (!this.checkValidation()) {
       return
     }
@@ -101,6 +107,7 @@ export class InvoiceDetailComponent implements OnInit {
           this.router.navigate([`/invoice/${nextPage}`]);
         });
       })
+    }
   }
 
   getAllOrderNo() {
@@ -215,7 +222,13 @@ export class InvoiceDetailComponent implements OnInit {
       let initialPendingQuantity = this.quantityPending[index]
       leftQuantity = initialPendingQuantity - receivedQuantity
     }
-
+    if(leftQuantity<0){
+      this.openSnackBar('Quantity received cannot be more than quantity pending!','OK')
+      this.quantityReceivedGreater = true;
+    }
+    else{
+      this.quantityReceivedGreater = false;
+    }
     controlArray.controls[index].get('quantityPending').setValue(leftQuantity)
   }
 
